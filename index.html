@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Tic Tac Toe</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- makes it responsive -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link rel="shortcut icon" href="./src/fav.jpg" type="image/x-icon">
   <style>
@@ -37,9 +38,12 @@
       text-shadow: 2px 2px 6px rgba(0,0,0,0.6);
       font-size: 3rem;
       margin-bottom: 350px;
+      text-align: center;
     }
 
     .start-btn {
+      position:fixed;
+      bottom: 46px;
       padding: 10px 30px;
       font-size: 18px;
       font-weight: bold;
@@ -50,7 +54,7 @@
       cursor: pointer;
       transition: all 0.3s ease;
       text-transform: uppercase;
-      letter-spacing: 4px;
+      letter-spacing: 6px;
       box-shadow: 0 0 5px #03e9f4;
     }
 
@@ -114,19 +118,18 @@
     }
 
     .game-board {
-      display: none; /* stays hidden until game starts */
+      display: none;
       margin-top: 30px;
       width: 100%;
       flex-direction: column;
       align-items: center;
     }
 
-    /* Responsive grid */
     .grid {
       display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-template-columns: repeat(3, 1fr);
       gap: 10px;
-      width: 100%;
+      width: 90vw;
       max-width: 320px;
     }
 
@@ -158,6 +161,7 @@
       font-size: 20px;
       margin-top: 15px;
       text-shadow: 1px 1px 4px #000;
+      text-align: center;
     }
 
     .winner-buttons {
@@ -171,75 +175,90 @@
       flex: 1;
     }
 
-    /* Mobile first adjustments */
-    @media (max-width: 480px) {
-      body {
-        padding: 10px;
-      }
-
+    /* ===== Responsive adjustments ===== */
+    @media (max-width: 768px) {
       h1 {
-        font-size: clamp(1.5rem, 6vw, 2rem);
-        margin-bottom: 20px;
-        text-align: center;
+        font-size: 2rem;
+        margin-bottom: 200px;
       }
 
       .start-btn {
-        font-size: clamp(14px, 4vw, 16px);
+        font-size: 16px;
         padding: 8px 20px;
         letter-spacing: 2px;
-        bottom: 15px;
-        position: fixed;
-        left: 50%;
-        transform: translateX(-50%);
       }
 
-      .modal-content,
-      .winner-content {
+      .modal-content, .winner-content {
+        padding: 20px;
         width: 90%;
-        padding: 15px;
-        font-size: 14px;
       }
 
-      .modal-content h2,
-      .winner-content h2 {
-        font-size: 18px;
+      .modal-content h2, .winner-content h2 {
+        font-size: 20px;
       }
 
       .modal-content button,
       .winner-buttons button {
         font-size: 14px;
-        padding: 8px 12px;
+        padding: 10px 15px;
       }
 
       .grid {
-        gap: 5px;
-        max-width: 90vw;
+        gap: 10px;
+        max-width: 60%;
       }
 
       .cell {
+        font-size: 2rem;
+        border-radius: 8px;
+      }
+
+      .cell i {
+        font-size: 3.2rem;
+      }
+
+      .status {
+        font-size: 16px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      h1 {
+        font-size: 2.5rem;
+        margin-bottom: 350px;
+      }
+
+      .grid {
+        gap: 10px;
+        max-width: 90%;
+      }
+
+      .cell {
+        font-size: 1.8rem;
         border-radius: 6px;
       }
 
       .cell i {
-        font-size: clamp(1.2rem, 8vw, 2rem);
+        font-size: 3rem;
       }
 
-      .status {
-        font-size: clamp(14px, 4vw, 16px);
-        text-align: center;
-        margin-top: 10px;
+      .start-btn {
+        font-size: 14px;
+        padding: 8px 15px;
       }
-    }
 
-    @media (max-width: 360px) {
-      .cell i {
-        font-size: clamp(1rem, 7vw, 1.5rem);
+      .modal-content, .winner-content {
+        padding: 15px;
       }
 
       .modal-content button,
       .winner-buttons button {
-        padding: 6px 10px;
-        font-size: 12px;
+        font-size: 13px;
+        padding: 8px 12px;
+      }
+
+      .status {
+        font-size: 14px;
       }
     }
   </style>
@@ -344,7 +363,7 @@
 
       if (!board.includes("")) {
         isGameActive = false;
-        winnerText.textContent = "It's a draw!";
+        winnerText.textContent = "Draw!";
         winnerModal.style.display = 'flex';
         return;
       }
@@ -372,7 +391,7 @@
 
       if (!board.includes("")) {
         isGameActive = false;
-        winnerText.textContent = "It's a draw!";
+        winnerText.textContent = "Draw!";
         winnerModal.style.display = 'flex';
         return;
       }
