@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Tic Tac Toe</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="shortcut icon" href="./src/fav.jpg" type="image/x-icon">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    body {
+      background: url('./src/bg.jpg') center/cover no-repeat;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      position: relative;
+    }
+
+    body::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      z-index: -1;
+    }
+
+    h1 {
+      color: #fff;
+      text-shadow: 2px 2px 6px rgba(0,0,0,0.6);
+      font-size: 3rem;
+      margin-bottom: 350px;
+    }
+
+    .start-btn {
+      padding: 10px 30px;
+      font-size: 18px;
+      font-weight: bold;
+      border: none;
+      background: #03e9f4;
+      color: #050801;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 4px;
+      box-shadow: 0 0 5px #03e9f4;
+    }
+
+    .start-btn:hover {
+      background: #03e9f4;
+      color: #050801;
+      box-shadow: 0 0 5px #03e9f4,
+                  0 0 100px #03e9f4;
+    }
+
+    .modal, .winner-modal {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.7);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
+    }
+
+    .modal-content, .winner-content {
+      background: #1e272e;
+      color: white;
+      padding: 30px 40px;
+      border-radius: 12px;
+      text-align: center;
+      position: relative;
+      width: 90%;
+      max-width: 400px;
+      box-shadow: 0 0 15px rgba(255,255,255,0.1);
+    }
+
+    .modal-content h2, .winner-content h2 {
+      margin-bottom: 20px;
+      font-size: 24px;
+    }
+
+    .modal-content button,
+    .winner-buttons button {
+      margin: 10px 5px;
+      padding: 12px 25px;
+      font-size: 16px;
+      border: none;
+      background: #03e9f4;
+      color: black;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .modal-content button:hover,
+    .winner-buttons button:hover {
+      background: #03e9f4;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 12px;
+      right: 15px;
+      font-size: 20px;
+      cursor: pointer;
+      transition: color 0.3s ease;
+    }
+
+    .close-btn:hover {
+      color: #e74c3c;
+    }
+
+    .game-board {
+      display: none;
+      margin-top: 30px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 100px);
+      grid-template-rows: repeat(3, 100px);
+      gap: 10px;
+    }
+
+    .cell {
+      background: #2d3436;
+      color: #fff;
+      font-size: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      border-radius: 10px;
+      box-shadow: 0 0 5px #03e9f4;
+      transition: background 0.3s ease;
+    }
+
+    .cell:hover {
+      background: #636e72;
+    }
+
+    .cell i {
+      font-size: 40px;
+      color: #fff;
+    }
+
+    .status {
+      color: #ffffff;
+      font-size: 20px;
+      margin-top: 15px;
+      text-shadow: 1px 1px 4px #000;
+    }
+
+    .winner-buttons {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      margin-top: 20px;
+    }
+
+    .winner-buttons button {
+      flex: 1;
+    }
+
+    /* Mobile Responsive */
+    @media (max-width: 480px) {
+      .grid {
+        grid-template-columns: repeat(3, 60px);
+        grid-template-rows: repeat(3, 60px);
+        gap: 5px;
+      }
+
+      .cell i {
+        font-size: 24px;
+      }
+
+      .game-board {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        transform: scale(0.85);
+      }
+
+      .start-btn {
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 1000;
+      }
+
+      h1 {
+        font-size: 2rem;
+        margin-bottom: 280px;
+        text-align: center;
+      }
+
+      .modal-content, .winner-content {
+        padding: 20px;
+        width: 90%;
+      }
+
+      .modal-content h2, .winner-content h2 {
+        font-size: 20px;
+      }
+
+      .modal-content button, .winner-buttons button {
+        padding: 10px 15px;
+        font-size: 14px;
+      }
+
+      .status {
+        font-size: 16px;
+        margin-top: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Tic Tac Toe</h1>
+  <button class="start-btn" id="startGame">Start Game</button>
+
+  <!-- Mode Selection Popup -->
+  <div class="modal" id="modeModal">
+    <div class="modal-content">
+      <i class="fas fa-times close-btn" onclick="closeModal('modeModal')"></i>
+      <h2>Select Game Mode</h2>
+      <button onclick="startGame('computer')">Play with Computer</button>
+      <button onclick="startGame('friend')">Play with Friend</button>
+    </div>
+  </div>
+
+  <!-- Game Board -->
+  <div class="game-board" id="gameBoard">
+    <div class="grid" id="grid">
+      <div class="cell" data-index="0"></div>
+      <div class="cell" data-index="1"></div>
+      <div class="cell" data-index="2"></div>
+      <div class="cell" data-index="3"></div>
+      <div class="cell" data-index="4"></div>
+      <div class="cell" data-index="5"></div>
+      <div class="cell" data-index="6"></div>
+      <div class="cell" data-index="7"></div>
+      <div class="cell" data-index="8"></div>
+    </div>
+    <div class="status" id="statusText">Player X's turn</div>
+  </div>
+
+  <!-- Winner Modal -->
+  <div class="winner-modal" id="winnerModal">
+    <div class="winner-content">
+      <h2 id="winnerText"></h2>
+      <div class="winner-buttons">
+        <button onclick="goHome()">Home</button>
+        <button onclick="resetAll()">Play Again</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const startBtn = document.getElementById('startGame');
+    const modeModal = document.getElementById('modeModal');
+    const gameBoard = document.getElementById('gameBoard');
+    const cells = document.querySelectorAll('.cell');
+    const statusText = document.getElementById('statusText');
+    const winnerModal = document.getElementById('winnerModal');
+    const winnerText = document.getElementById('winnerText');
+
+    let board = Array(9).fill("");
+    let currentPlayer = "X";
+    let isGameActive = true;
+    let gameMode = "friend";
+
+    startBtn.addEventListener('click', () => {
+      modeModal.style.display = 'flex';
+    });
+
+    function closeModal(id) {
+      document.getElementById(id).style.display = 'none';
+    }
+
+    function startGame(mode) {
+      gameMode = mode;
+      closeModal('modeModal');
+      gameBoard.style.display = 'block';
+
+      document.querySelector('h1').style.display = 'none';
+      document.getElementById('startGame').style.display = 'none';
+
+      resetBoard();
+    }
+
+    function resetBoard() {
+      board = Array(9).fill("");
+      currentPlayer = "X";
+      isGameActive = true;
+      statusText.textContent = `Player ${currentPlayer}'s turn`;
+      cells.forEach(cell => cell.innerHTML = "");
+    }
+
+    function handleClick(e) {
+      const index = e.target.getAttribute('data-index');
+      if (!isGameActive || board[index]) return;
+
+      board[index] = currentPlayer;
+      e.target.innerHTML = currentPlayer === "X" ? '<i class="fas fa-xmark"></i>' : '<i class="far fa-circle"></i>';
+
+      if (checkWinner()) {
+        isGameActive = false;
+        winnerText.textContent = `Player ${currentPlayer} is the winner!`;
+        winnerModal.style.display = 'flex';
+        return;
+      }
+
+      if (!board.includes("")) {
+        isGameActive = false;
+        winnerText.textContent = "It's a draw!";
+        winnerModal.style.display = 'flex';
+        return;
+      }
+
+      currentPlayer = currentPlayer === "X" ? "O" : "X";
+      statusText.textContent = `Player ${currentPlayer}'s turn`;
+
+      if (gameMode === "computer" && currentPlayer === "O") {
+        setTimeout(computerMove, 500);
+      }
+    }
+
+    function computerMove() {
+      let emptyCells = board.map((val, idx) => val === "" ? idx : null).filter(v => v !== null);
+      let move = emptyCells[Math.floor(Math.random() * emptyCells.length)];
+      board[move] = "O";
+      cells[move].innerHTML = '<i class="far fa-circle"></i>';
+
+      if (checkWinner()) {
+        isGameActive = false;
+        winnerText.textContent = `Player O is the winner!`;
+        winnerModal.style.display = 'flex';
+        return;
+      }
+
+      if (!board.includes("")) {
+        isGameActive = false;
+        winnerText.textContent = "It's a draw!";
+        winnerModal.style.display = 'flex';
+        return;
+      }
+
+      currentPlayer = "X";
+      statusText.textContent = `Player ${currentPlayer}'s turn`;
+    }
+
+    function checkWinner() {
+      const wins = [
+        [0,1,2], [3,4,5], [6,7,8],
+        [0,3,6], [1,4,7], [2,5,8],
+        [0,4,8], [2,4,6]
+      ];
+      return wins.some(combo => {
+        const [a,b,c] = combo;
+        return board[a] && board[a] === board[b] && board[b] === board[c];
+      });
+    }
+
+    function resetAll() {
+      winnerModal.style.display = 'none';
+      resetBoard();
+    }
+
+    function goHome() {
+      winnerModal.style.display = 'none';
+      gameBoard.style.display = 'none';
+      document.querySelector('h1').style.display = 'block';
+      document.getElementById('startGame').style.display = 'inline-block';
+      resetBoard();
+    }
+
+    cells.forEach(cell => cell.addEventListener('click', handleClick));
+  </script>
+</body>
+</html>
