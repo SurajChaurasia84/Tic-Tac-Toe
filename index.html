@@ -55,8 +55,6 @@
     }
 
     .start-btn:hover {
-      background: #03e9f4;
-      color: #050801;
       box-shadow: 0 0 5px #03e9f4,
                   0 0 100px #03e9f4;
     }
@@ -102,11 +100,6 @@
       transition: background 0.3s ease;
     }
 
-    .modal-content button:hover,
-    .winner-buttons button:hover {
-      background: #03e9f4;
-    }
-
     .close-btn {
       position: absolute;
       top: 12px;
@@ -121,21 +114,27 @@
     }
 
     .game-board {
-      display: none;
+      display: none; /* stays hidden until game starts */
       margin-top: 30px;
+      width: 100%;
+      flex-direction: column;
+      align-items: center;
     }
 
+    /* Responsive grid */
     .grid {
       display: grid;
-      grid-template-columns: repeat(3, 100px);
-      grid-template-rows: repeat(3, 100px);
+      grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 10px;
+      width: 100%;
+      max-width: 320px;
     }
 
     .cell {
+      aspect-ratio: 1 / 1;
       background: #2d3436;
       color: #fff;
-      font-size: 40px;
+      font-size: 2.5rem;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -150,7 +149,7 @@
     }
 
     .cell i {
-      font-size: 40px;
+      font-size: 2.5rem;
       color: #fff;
     }
 
@@ -172,56 +171,75 @@
       flex: 1;
     }
 
-    /* Mobile Responsive */
+    /* Mobile first adjustments */
     @media (max-width: 480px) {
-      .grid {
-        grid-template-columns: repeat(3, 60px);
-        grid-template-rows: repeat(3, 60px);
-        gap: 5px;
-      }
-
-      .cell i {
-        font-size: 24px;
-      }
-
-      .game-board {
-        position: fixed;
-        top: 20px;
-        left: 20px;
-        transform: scale(0.85);
-      }
-
-      .start-btn {
-        position: fixed;
-        bottom: 20px;
-        left: 50%;
-        transform: translateX(-50%);
-        z-index: 1000;
+      body {
+        padding: 10px;
       }
 
       h1 {
-        font-size: 2rem;
-        margin-bottom: 280px;
+        font-size: clamp(1.5rem, 6vw, 2rem);
+        margin-bottom: 20px;
         text-align: center;
       }
 
-      .modal-content, .winner-content {
-        padding: 20px;
+      .start-btn {
+        font-size: clamp(14px, 4vw, 16px);
+        padding: 8px 20px;
+        letter-spacing: 2px;
+        bottom: 15px;
+        position: fixed;
+        left: 50%;
+        transform: translateX(-50%);
+      }
+
+      .modal-content,
+      .winner-content {
         width: 90%;
-      }
-
-      .modal-content h2, .winner-content h2 {
-        font-size: 20px;
-      }
-
-      .modal-content button, .winner-buttons button {
-        padding: 10px 15px;
+        padding: 15px;
         font-size: 14px;
       }
 
+      .modal-content h2,
+      .winner-content h2 {
+        font-size: 18px;
+      }
+
+      .modal-content button,
+      .winner-buttons button {
+        font-size: 14px;
+        padding: 8px 12px;
+      }
+
+      .grid {
+        gap: 5px;
+        max-width: 90vw;
+      }
+
+      .cell {
+        border-radius: 6px;
+      }
+
+      .cell i {
+        font-size: clamp(1.2rem, 8vw, 2rem);
+      }
+
       .status {
-        font-size: 16px;
+        font-size: clamp(14px, 4vw, 16px);
+        text-align: center;
         margin-top: 10px;
+      }
+    }
+
+    @media (max-width: 360px) {
+      .cell i {
+        font-size: clamp(1rem, 7vw, 1.5rem);
+      }
+
+      .modal-content button,
+      .winner-buttons button {
+        padding: 6px 10px;
+        font-size: 12px;
       }
     }
   </style>
@@ -293,11 +311,9 @@
     function startGame(mode) {
       gameMode = mode;
       closeModal('modeModal');
-      gameBoard.style.display = 'block';
-
+      gameBoard.style.display = 'flex';
       document.querySelector('h1').style.display = 'none';
       document.getElementById('startGame').style.display = 'none';
-
       resetBoard();
     }
 
@@ -310,11 +326,14 @@
     }
 
     function handleClick(e) {
-      const index = e.target.getAttribute('data-index');
+      const cellElement = e.currentTarget;
+      const index = cellElement.getAttribute('data-index');
       if (!isGameActive || board[index]) return;
 
       board[index] = currentPlayer;
-      e.target.innerHTML = currentPlayer === "X" ? '<i class="fas fa-xmark"></i>' : '<i class="far fa-circle"></i>';
+      cellElement.innerHTML = currentPlayer === "X"
+        ? '<i class="fas fa-xmark"></i>'
+        : '<i class="far fa-circle"></i>';
 
       if (checkWinner()) {
         isGameActive = false;
